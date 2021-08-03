@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/frameCategory"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/circularbordersolid">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:id="@+id/rear_left_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+            <ImageButton
+                android:src="@drawable/pen_icon"
+                android:backgroundTint="@color/colorPrimary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="22dp"
+                app:tint="@color/white" />
+            ></RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rear_right_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <ImageButton
+                android:id="@+id/imgBtnDel"
+                android:src="@drawable/delete_icon_24"
+                android:backgroundTint="@color/red"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="22dp"
+                app:tint="@color/white" />
+        </RelativeLayout>
+
+        <!-- FrontView Must be at the lower level to be drawn Over the rear views -->
+        <RelativeLayout
+            android:padding="20dp"
+            android:id="@+id/front_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/categoryName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto"
+                android:text="Accessories"
+                android:textSize="14sp" />
+
+
+        </RelativeLayout>
+    </LinearLayout>
+
+</FrameLayout>

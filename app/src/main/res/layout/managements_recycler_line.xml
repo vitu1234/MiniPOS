@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
+    >
+
+    <ImageView
+        android:layout_alignParentStart="true"
+        android:id="@+id/imageViewManagementItem"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:srcCompat="@drawable/product_24_icon"
+        app:tint="@color/black" />
+    <TextView
+        android:layout_marginStart="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Products"
+        android:id="@+id/managementName"
+        android:layout_toRightOf="@+id/imageViewManagementItem"
+        android:fontFamily="@font/roboto_bold"
+        android:textColor="@color/colorPrimaryVariant"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="View lists, create, edit or delete product"
+        android:id="@+id/managementDesc"
+        android:layout_toRightOf="@+id/imageViewManagementItem"
+        android:layout_below="@+id/managementName"
+        android:fontFamily="@font/poppins"
+        />
+
+</RelativeLayout>

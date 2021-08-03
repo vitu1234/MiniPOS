@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--    single mean an item will be selected untill it is unchecked/unselected-->
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/pos_terminal"
+            android:icon="@drawable/shopping_bag_full_32"
+            android:title="@string/pos_terminal" />
+        <item
+            android:id="@+id/stock_in"
+            android:icon="@drawable/warehouse_32"
+            android:title="@string/stock_in" />
+        <item
+            android:id="@+id/managements"
+            android:icon="@drawable/document_32"
+            android:title="@string/management" />
+        <item
+            android:id="@+id/reports"
+            android:icon="@drawable/document_32"
+            android:title="@string/reports" />
+
+        <item
+            android:id="@+id/settings"
+            android:icon="@drawable/settings_32"
+            android:title="@string/settings" />
+        <item
+            android:id="@+id/help"
+            android:icon="@drawable/settings_32"
+            android:title="@string/help" />
+
+        <item
+            android:id="@+id/signout"
+            android:icon="@drawable/settings_32"
+            android:title="@string/signout" />
+
+    </group>
+
+
+</menu>
