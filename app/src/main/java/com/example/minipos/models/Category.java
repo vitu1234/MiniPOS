@@ -23,6 +23,9 @@ public class Category {
     @ColumnInfo(name = "category_name")
     String category_name;
 
+    @ColumnInfo(name = "category_note")
+    String category_note;
+
     @ColumnInfo(name = "date_created")
     String date_created;
 
@@ -33,9 +36,10 @@ public class Category {
 
     private boolean showMenu = false;
 
-    public Category(int category_id, String category_name, String date_created, String date_updated, boolean showMenu) {
+    public Category(int category_id, String category_name, String category_note, String date_created, String date_updated, boolean showMenu) {
         this.category_id = category_id;
         this.category_name = category_name;
+        this.category_note = category_note;
         this.date_created = date_created;
         this.date_updated = date_updated;
         this.showMenu = showMenu;
@@ -87,5 +91,13 @@ public class Category {
 
     public void setShowMenu(boolean showMenu) {
         this.showMenu = showMenu;
+    }
+
+    public String getCategory_note() {
+        return category_note;
+    }
+
+    public void setCategory_note(String category_note) {
+        this.category_note = category_note;
     }
 }

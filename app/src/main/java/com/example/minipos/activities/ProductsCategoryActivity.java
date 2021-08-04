@@ -5,11 +5,12 @@ import android.graphics.Canvas;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,29 +21,74 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.minipos.R;
 import com.example.minipos.adapters.ProductCategoryAdapter;
+import com.example.minipos.api.RetrofitClient;
+import com.example.minipos.models.AllDataResponse;
 import com.example.minipos.models.Category;
+import com.example.minipos.models.Product;
+import com.example.minipos.models.Supplier;
+import com.example.minipos.models.User;
 import com.example.minipos.roomdb.AppDatabase;
+import com.example.minipos.utils.CheckInternet;
+import com.example.minipos.utils.MyProgressDialog;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ProductsCategoryActivity extends AppCompatActivity {
 
     ProductCategoryAdapter adapter;
-    TextInputLayout textInputLayoutCategoryName, textInputLayoutCategoryNotes;
+    TextInputLayout textInputLayoutCategoryName, textInputLayoutCategoryNotes, textInputLayoutSearch;
     TextView textViewCategoryWarning;
+
     final Context context = this;
     AppDatabase room_db;
+    CheckInternet checkInternet;
+    MyProgressDialog progressDialog;
+    AlertDialog alertDialog;
+
+    String category_name = " ", notes = "-";
+
+    Call<AllDataResponse> call;
+    private List<User> userList;
+    private List<Category> categoryList;
+    private List<Supplier> supplierList;
+    private List<Product> productList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_products_category);
         room_db = AppDatabase.getDbInstance(this);
+        checkInternet = new CheckInternet(this);
+        progressDialog = new MyProgressDialog(this);
+
         textViewCategoryWarning = findViewById(R.id.categoryWarning);
+        textInputLayoutSearch = findViewById(R.id.searchCategoryLayout);
 
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         setCategoryRecycler();
+
+        textInputLayoutSearch.getEditText().addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                filter(s.toString());
+            }
+        });
 
     }
 
@@ -153,21 +199,153 @@ public class ProductsCategoryActivity extends AppCompatActivity {
                             // get user input and set it to result
                             // edit text
 //                                result.setText(userInput.getText());
-                            Toast.makeText(context, "" + textInputLayoutCategoryName.getEditText().getText(), Toast.LENGTH_SHORT).show();
+
                         })
                 .setNegativeButton("Cancel",
                         (dialog, id) -> dialog.cancel());
 
         // create alert dialog
-        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog = alertDialogBuilder.create();
 
         // show it
         alertDialog.show();
         alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.red));
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.colorPrimary));
 
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Boolean wantToCloseDialog = false;
+                //Do stuff, possibly set wantToCloseDialog to true then...
+                if (wantToCloseDialog) {
+                    alertDialog.dismiss();
+                } else {
+
+                    if (textInputLayoutCategoryName.getEditText().getText().toString().isEmpty()) {
+                        textInputLayoutCategoryName.setErrorEnabled(true);
+                        textInputLayoutCategoryName.setError("required");
+                        return;
+                    }
+
+                    if (textInputLayoutCategoryNotes.getEditText().getText().toString().isEmpty()) {
+                        notes = "-";
+                    } else {
+                        notes = textInputLayoutCategoryNotes.getEditText().getText().toString();
+                    }
+                    category_name = textInputLayoutCategoryName.getEditText().getText().toString();
+                    if (checkInternet.isInternetConnected(context)) {
+                        addCategoryToServer();
+                    } else {
+                        checkInternet.showInternetDialog(context);
+                    }
+                }
+            }
+        });
 
     }
 
 
+    private void addCategoryToServer() {
+        progressDialog.showDialog("Adding...");
+        call = RetrofitClient.getInstance().getApi().add_category(category_name, notes);
+        call.enqueue(new Callback<AllDataResponse>() {
+            @Override
+            public void onResponse(Call<AllDataResponse> call, Response<AllDataResponse> response) {
+                AllDataResponse response1 = response.body();
+                alertDialog.dismiss();
+                progressDialog.closeDialog();
+                if (response1 != null) {
+                    if (!response1.isError()) {
+
+                        userList = response1.getUsers();
+                        room_db.userDao().deleteAllUsers();
+                        for (int i = 0; i < userList.size(); i++) {
+                            room_db.userDao().insertUser(userList.get(i));
+                        }
+
+                        supplierList = response1.getSuppliers();
+                        room_db.supplierDao().deleteAllSuppliers();
+                        for (int i = 0; i < supplierList.size(); i++) {
+                            room_db.supplierDao().insertSupplier(supplierList.get(i));
+                        }
+
+                        categoryList = response1.getCategories();
+                        room_db.categoryDao().deleteAllCategorys();
+                        for (int i = 0; i < categoryList.size(); i++) {
+                            room_db.categoryDao().insertCategory(categoryList.get(i));
+                        }
+
+                        productList = response1.getProducts();
+                        room_db.productDao().getAllProducts();
+                        for (int i = 0; i < productList.size(); i++) {
+                            room_db.productDao().insertProduct(productList.get(i));
+                        }
+                        adapter.swapItems(room_db.categoryDao().getAllCategorys());
+                        progressDialog.showSuccessToast(response1.getMessage());
+
+
+                    } else {
+                        progressDialog.showErrorToast(response1.getMessage());
+                    }
+                } else {
+                    progressDialog.showErrorToast("No server response!");
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(Call<AllDataResponse> call, Throwable t) {
+                progressDialog.showErrorToast("No server response");
+                progressDialog.closeDialog();
+            }
+        });
+
+
+    }
+
+    //filtering the list
+    private void filter(String text) {
+        List<Category> filteredList = new ArrayList<>();
+        for (Category category : room_db.categoryDao().getAllCategorys()) {
+            if (category.getCategory_name().toLowerCase().contains(text.toLowerCase())) {
+                filteredList.add(category);
+                textViewCategoryWarning.setVisibility(View.INVISIBLE);
+            } else {
+                textViewCategoryWarning.setVisibility(View.VISIBLE);
+                textViewCategoryWarning.setText("No records found!");
+            }
+        }
+        if (adapter != null) {
+            adapter.filterList(filteredList);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (call != null) {
+            call.cancel();
+        }
+
+        if (adapter != null) {
+            if (adapter.call != null) {
+                adapter.call.cancel();
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (call != null) {
+            call.cancel();
+        }
+
+        if (adapter != null) {
+            if (adapter.call != null) {
+                adapter.call.cancel();
+            }
+        }
+    }
 }

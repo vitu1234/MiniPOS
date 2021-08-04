@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.minipos.R;
 import com.example.minipos.activities.AddSupplierActivity;
+import com.example.minipos.models.Category;
 import com.example.minipos.models.Supplier;
 import com.example.minipos.models.User;
 import com.example.minipos.roomdb.AppDatabase;
@@ -167,6 +168,11 @@ public class ProductsSupplierAdapter extends RecyclerView.Adapter<RecyclerView.V
         for (int i = 0; i < supplierList.size(); i++) {
             supplierList.get(i).setShowMenu(false);
         }
+        notifyDataSetChanged();
+    }
+
+    public void swapItems(List<Supplier> supplierList){
+        this.supplierList = supplierList;
         notifyDataSetChanged();
     }
 

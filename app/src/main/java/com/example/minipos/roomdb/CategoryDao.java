@@ -12,7 +12,7 @@ import java.util.List;
 
 @Dao
 public interface CategoryDao {
-    @Query("SELECT *FROM category")
+    @Query("SELECT *FROM category ORDER BY category_id DESC")
     List<Category> getAllCategorys();
 
     @Query("SELECT * FROM category WHERE category_id = :id")

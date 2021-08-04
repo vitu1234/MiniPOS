@@ -173,6 +173,11 @@ public class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         notifyDataSetChanged();
     }
 
+    public void swapItems(List<Product> productList) {
+        this.productList = productList;
+        notifyDataSetChanged();
+    }
+
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
 

@@ -138,4 +138,20 @@ public class SplashScreen extends AppCompatActivity {
         }, SLIDE_TIMER);
 
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (call!=null){
+            call.cancel();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (call!=null){
+            call.cancel();
+        }
+    }
 }

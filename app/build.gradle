@@ -26,6 +26,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    repositories {
+        maven { url "https://jitpack.io" }
+    }
 }
 
 dependencies {
@@ -59,6 +62,17 @@ dependencies {
     //    retrofit plugin library
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
+    //custom toast
+    implementation 'com.github.MrNtlu:Toastie:1.1.0'
+
+    //loading dialog
+    implementation 'com.pnikosis:materialish-progress:1.7'
+
+    //sweet alert
+    implementation 'com.github.f0ris.sweetalert:library:1.6.2'
+
+
 
 
 }
