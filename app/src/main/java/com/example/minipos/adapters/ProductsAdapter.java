@@ -6,33 +6,35 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.minipos.R;
-import com.example.minipos.activities.ProductsCategoryActivity;
-import com.example.minipos.models.Category;
-import com.google.android.material.textfield.TextInputLayout;
+import com.example.minipos.activities.AddViewEditProductActivity;
+import com.example.minipos.api.RetrofitClient;
+import com.example.minipos.models.Product;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ProductCategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+public class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     Context context;
-    List<Category> categoryList;
+    List<Product> productList;
     private final int SHOW_MENU = 1;
     private final int HIDE_MENU = 2;
 
-    public ProductCategoryAdapter(Context context, List<Category> categoryList) {
+    public ProductsAdapter(Context context, List<Product> productList) {
         this.context = context;
-        this.categoryList = categoryList;
+        this.productList = productList;
     }
 
     @NonNull
@@ -44,7 +46,7 @@ public class ProductCategoryAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_menu, parent, false);
             return new MenuViewHolder(v);
         } else {
-            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.category_recycler_line, parent, false);
+            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.products_recycler_line, parent, false);
             return new MyViewHolder(v);
         }
     }
@@ -52,9 +54,19 @@ public class ProductCategoryAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-        Category entity = categoryList.get(position);
+        Product entity = productList.get(position);
         if (holder instanceof MyViewHolder) {
-            ((MyViewHolder) holder).textViewName.setText(categoryList.get(position).getCategory_name());
+            ((MyViewHolder) holder).textViewName.setText(productList.get(position).getProduct_name());
+            ((MyViewHolder) holder).textViewCost.setText("K " + productList.get(position).getProduct_cost());
+            ((MyViewHolder) holder).textViewPrice.setText("K " + productList.get(position).getProduct_price());
+
+            String imageUri = RetrofitClient.BASE_URL2 + "images/products/" + productList.get(position).getProduct_img_url();
+
+            Picasso.get().load(imageUri)
+                    .placeholder(R.drawable.image_icon)
+                    .error(R.drawable.image_icon)
+                    .into(((MyViewHolder) holder).itemPic);
+
             ((MyViewHolder) holder).container.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
@@ -65,7 +77,7 @@ public class ProductCategoryAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
 
         if (holder instanceof MenuViewHolder) {
-            ((MenuViewHolder) holder).textViewCategoryNameMenu.setText(categoryList.get(position).getCategory_name());
+            ((MenuViewHolder) holder).textViewProductNameMenu.setText(productList.get(position).getProduct_name());
             //Menu Actions
             ((MenuViewHolder) holder).buttonClose.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -77,48 +89,10 @@ public class ProductCategoryAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             ((MenuViewHolder) holder).buttonEdit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    TextInputLayout textInputLayoutCategoryName, textInputLayoutCategoryNotes;
-                    TextView textViewcategoryTitle;
-
-                    // get prompts.xml view
-                    LayoutInflater li = LayoutInflater.from(context);
-                    View promptsView = li.inflate(R.layout.category_prompt, null);
-
-                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                            context);
-
-                    // set prompts.xml to alertdialog builder
-                    alertDialogBuilder.setView(promptsView);
-
-                    textInputLayoutCategoryName = promptsView
-                            .findViewById(R.id.categoryNamePrompt);
-                    textInputLayoutCategoryNotes = promptsView
-                            .findViewById(R.id.categoryNotesPrompt);
-                    textViewcategoryTitle = promptsView.findViewById(R.id.categoryTitle);
-
-                    textViewcategoryTitle.setText("Edit Category");
-                    textInputLayoutCategoryName.getEditText().setText(categoryList.get(position).getCategory_name());
-
-                    // set dialog message
-                    alertDialogBuilder
-                            .setCancelable(false)
-                            .setPositiveButton("Save",
-                                    (dialog, id) -> {
-                                        // get user input and set it to result
-                                        // edit text
-//                                result.setText(userInput.getText());
-                                        Toast.makeText(context, "" + textInputLayoutCategoryName.getEditText().getText(), Toast.LENGTH_SHORT).show();
-                                    })
-                            .setNegativeButton("Cancel",
-                                    (dialog, id) -> dialog.cancel());
-
-                    // create alert dialog
-                    AlertDialog alertDialog = alertDialogBuilder.create();
-
-                    // show it
-                    alertDialog.show();
-                    alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(context.getResources().getColor(R.color.red));
-                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(context.getResources().getColor(R.color.colorPrimary));
+                    closeMenu();
+                    Intent intent = new Intent(context, AddViewEditProductActivity.class);
+                    intent.putExtra("product_id", productList.get(position).getProduct_id());
+                    context.startActivity(intent);
 
 
                 }
@@ -129,7 +103,7 @@ public class ProductCategoryAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 public void onClick(View v) {
 
                     AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
-                    builder1.setMessage("Are you sure to delete?");
+                    builder1.setMessage("Are you sure to delete product?");
                     builder1.setTitle("Warning");
                     builder1.setCancelable(true);
 
@@ -154,6 +128,7 @@ public class ProductCategoryAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(context.getResources().getColor(R.color.red));
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(context.getResources().getColor(R.color.colorPrimary));
 
+
                 }
             });
         }
@@ -161,12 +136,12 @@ public class ProductCategoryAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public int getItemCount() {
-        return categoryList.size();
+        return productList.size();
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (categoryList.get(position).isShowMenu()) {
+        if (productList.get(position).isShowMenu()) {
             return SHOW_MENU;
         } else {
             return HIDE_MENU;
@@ -174,17 +149,17 @@ public class ProductCategoryAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     public void showMenu(int position) {
-        for (int i = 0; i < categoryList.size(); i++) {
-            categoryList.get(i).setShowMenu(false);
+        for (int i = 0; i < productList.size(); i++) {
+            productList.get(i).setShowMenu(false);
         }
-        categoryList.get(position).setShowMenu(true);
+        productList.get(position).setShowMenu(true);
         notifyDataSetChanged();
     }
 
 
     public boolean isMenuShown() {
-        for (int i = 0; i < categoryList.size(); i++) {
-            if (categoryList.get(i).isShowMenu()) {
+        for (int i = 0; i < productList.size(); i++) {
+            if (productList.get(i).isShowMenu()) {
                 return true;
             }
         }
@@ -192,8 +167,8 @@ public class ProductCategoryAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     public void closeMenu() {
-        for (int i = 0; i < categoryList.size(); i++) {
-            categoryList.get(i).setShowMenu(false);
+        for (int i = 0; i < productList.size(); i++) {
+            productList.get(i).setShowMenu(false);
         }
         notifyDataSetChanged();
     }
@@ -201,15 +176,20 @@ public class ProductCategoryAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
 
-        TextView textViewName;
-        FrameLayout container;
+        TextView textViewName, textViewCost, textViewPrice;
+        RelativeLayout container;
+
+        CircleImageView itemPic;
 
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            textViewName = itemView.findViewById(R.id.categoryName);
-            container = itemView.findViewById(R.id.frameCategory);
+            container = itemView.findViewById(R.id.frameProduct);
+            textViewName = itemView.findViewById(R.id.item_name);
+            itemPic = itemView.findViewById(R.id.item_picture);
+            textViewCost = itemView.findViewById(R.id.item_cost);
+            textViewPrice = itemView.findViewById(R.id.item_price);
 
             itemView.setOnLongClickListener(this);
 
@@ -227,14 +207,16 @@ public class ProductCategoryAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public class MenuViewHolder extends RecyclerView.ViewHolder {
 
         ImageView buttonClose, buttonEdit, buttonDel;
-        TextView textViewCategoryNameMenu;
+        TextView textViewProductNameMenu;
 
         public MenuViewHolder(View view) {
             super(view);
             buttonClose = view.findViewById(R.id.closeBtn);
             buttonEdit = view.findViewById(R.id.editCategoryBtn);
             buttonDel = view.findViewById(R.id.delCategoryBtn);
-            textViewCategoryNameMenu = view.findViewById(R.id.categoryNameMenu);
+
+            textViewProductNameMenu = view.findViewById(R.id.categoryNameMenu);
+            textViewProductNameMenu.setVisibility(View.INVISIBLE);
         }
     }
 }

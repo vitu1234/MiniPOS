@@ -132,6 +132,17 @@
           android:fontFamily="@font/poppins"
           android:textSize="12sp"/>
 
+
+          <TextView
+              android:visibility="gone"
+              android:id="@+id/categoryWarning"
+              android:fontFamily="@font/poppins"
+              android:textSize="12sp"
+              android:textColor="@color/red"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="No product categories added"/>
+
           <androidx.recyclerview.widget.RecyclerView
               android:id="@+id/categoryListRecycler"
               android:layout_width="match_parent"

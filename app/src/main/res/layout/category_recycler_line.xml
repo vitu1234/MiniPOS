@@ -3,8 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/frameCategory"
+    android:background="?android:attr/selectableItemBackground"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/circularbordersolid">
+  >
 
     <LinearLayout
         android:layout_width="match_parent"

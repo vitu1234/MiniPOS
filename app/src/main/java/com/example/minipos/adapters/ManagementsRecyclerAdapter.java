@@ -7,13 +7,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.minipos.R;
+import com.example.minipos.activities.ProductsActivity;
 import com.example.minipos.activities.ProductsCategoryActivity;
+import com.example.minipos.activities.ProductsSupplierActivity;
 import com.example.minipos.models.Management;
 
 import java.util.List;
@@ -70,7 +71,8 @@ public class ManagementsRecyclerAdapter extends RecyclerView.Adapter<Managements
             //go through each item if you have few items within recycler view
             if (getLayoutPosition() == 0) {
                 //Do whatever you want here
-
+                Intent intent = new Intent(v.getContext(), ProductsActivity.class);
+                v.getContext().startActivity(intent);
             } else if (getLayoutPosition() == 1) {
                 //Do whatever you want here
                 Intent intent = new Intent(v.getContext(), ProductsCategoryActivity.class);
@@ -79,6 +81,8 @@ public class ManagementsRecyclerAdapter extends RecyclerView.Adapter<Managements
 
 
             } else if (getLayoutPosition() == 3) {
+                Intent intent = new Intent(v.getContext(), ProductsSupplierActivity.class);
+                v.getContext().startActivity(intent);
 
             } else if (getLayoutPosition() == 4) {
 

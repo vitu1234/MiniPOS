@@ -26,12 +26,12 @@
             android:title="@string/settings" />
         <item
             android:id="@+id/help"
-            android:icon="@drawable/settings_32"
+            android:icon="@drawable/help_32"
             android:title="@string/help" />
 
         <item
             android:id="@+id/signout"
-            android:icon="@drawable/settings_32"
+            android:icon="@drawable/sign_out_32"
             android:title="@string/signout" />
 
     </group>

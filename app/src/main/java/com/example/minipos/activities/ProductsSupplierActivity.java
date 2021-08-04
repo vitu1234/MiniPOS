@@ -1,17 +1,17 @@
 package com.example.minipos.activities;
 
+import android.app.ActivityOptions;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.util.Pair;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -19,42 +19,39 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.minipos.R;
-import com.example.minipos.adapters.ProductCategoryAdapter;
-import com.example.minipos.models.Category;
+import com.example.minipos.adapters.ProductsSupplierAdapter;
+import com.example.minipos.models.Supplier;
 import com.example.minipos.roomdb.AppDatabase;
-import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.List;
 
-public class ProductsCategoryActivity extends AppCompatActivity {
+public class ProductsSupplierActivity extends AppCompatActivity {
 
-    ProductCategoryAdapter adapter;
-    TextInputLayout textInputLayoutCategoryName, textInputLayoutCategoryNotes;
-    TextView textViewCategoryWarning;
+    ProductsSupplierAdapter adapter;
     final Context context = this;
     AppDatabase room_db;
+    List<Supplier> supplierList;
+    TextView textViewSupplierWarning;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_products_category);
+        setContentView(R.layout.activity_products_supplier);
         room_db = AppDatabase.getDbInstance(this);
-        textViewCategoryWarning = findViewById(R.id.categoryWarning);
+        textViewSupplierWarning = findViewById(R.id.supplierWarning);
 
-        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        setCategoryRecycler();
-
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);//remove keyboard
+        setSupplerRecylerView();
     }
 
-    private void setCategoryRecycler() {
+    private void setSupplerRecylerView() {
 
-        if (room_db.categoryDao().countAllCategorys() > 0) {
-            List<Category> categoryList = room_db.categoryDao().getAllCategorys();
-
-            adapter = new ProductCategoryAdapter(this, categoryList);
+        if (room_db.supplierDao().countAllSuppliers() > 0) {
+            supplierList = room_db.supplierDao().getAllSuppliers();
+            adapter = new ProductsSupplierAdapter(this, supplierList);
 
 // Initialize the RecyclerView and attach the Adapter to it as usual
-            RecyclerView recyclerView = findViewById(R.id.categoryListRecycler);
+            RecyclerView recyclerView = findViewById(R.id.supplierListRecycler);
 
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));//line between items
@@ -107,67 +104,30 @@ public class ProductsCategoryActivity extends AppCompatActivity {
             };
             ItemTouchHelper itemTouchHelper = new ItemTouchHelper(touchHelperCallback);
             itemTouchHelper.attachToRecyclerView(recyclerView);
-
         } else {
-            textViewCategoryWarning.setVisibility(View.VISIBLE);
+            textViewSupplierWarning.setVisibility(View.VISIBLE);
         }
 
     }
 
-    @Override
-    public void onBackPressed() {
-        if (adapter.isMenuShown()) {
-            adapter.closeMenu();
+    public void addSupplier(View view) {
+
+        Intent intent = new Intent(getApplicationContext(), AddSupplierActivity.class);
+
+        //add shared animation
+        Pair[] pairs = new Pair[1];//number of elements to be animated
+        pairs[0] = new Pair<View, String>(view.findViewById(R.id.fabaddSupplier), "to_add_supplierTransition");
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this, pairs);
+            startActivity(intent, options.toBundle());
         } else {
-            super.onBackPressed();
+            startActivity(intent);
         }
+
     }
 
 
     public void goback(View view) {
         onBackPressed();
     }
-
-    public void addCategory(View view) {
-
-        // get prompts.xml view
-        LayoutInflater li = LayoutInflater.from(context);
-        View promptsView = li.inflate(R.layout.category_prompt, null);
-
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                context);
-
-        // set prompts.xml to alertdialog builder
-        alertDialogBuilder.setView(promptsView);
-
-        textInputLayoutCategoryName = promptsView
-                .findViewById(R.id.categoryNamePrompt);
-        textInputLayoutCategoryNotes = promptsView
-                .findViewById(R.id.categoryNotesPrompt);
-
-        // set dialog message
-        alertDialogBuilder
-                .setCancelable(false)
-                .setPositiveButton("Save",
-                        (dialog, id) -> {
-                            // get user input and set it to result
-                            // edit text
-//                                result.setText(userInput.getText());
-                            Toast.makeText(context, "" + textInputLayoutCategoryName.getEditText().getText(), Toast.LENGTH_SHORT).show();
-                        })
-                .setNegativeButton("Cancel",
-                        (dialog, id) -> dialog.cancel());
-
-        // create alert dialog
-        AlertDialog alertDialog = alertDialogBuilder.create();
-
-        // show it
-        alertDialog.show();
-        alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.red));
-        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.colorPrimary));
-
-
-    }
-
-
 }
