@@ -15,6 +15,9 @@ public interface UserDao {
     @Query("SELECT *FROM user")
     List<User> getAllUsers();
 
+    @Query("SELECT *FROM user WHERE user_role = :supplier")
+    List<User> getAllUserSuppliers(String supplier);
+
     @Query("SELECT * FROM user WHERE user_id = :id")
     User findByUserId(int id);
 

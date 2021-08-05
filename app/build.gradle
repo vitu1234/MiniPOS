@@ -72,6 +72,10 @@ dependencies {
     //sweet alert
     implementation 'com.github.f0ris.sweetalert:library:1.6.2'
 
+    //image picker/camera/barcode
+    implementation 'com.sandrios.android:sandriosCamera:1.2.6'
+
+
 
 
 
