@@ -7,6 +7,8 @@ import android.graphics.Canvas;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Pair;
 import android.view.View;
 import android.view.WindowManager;
@@ -21,8 +23,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.minipos.R;
 import com.example.minipos.adapters.ProductsSupplierAdapter;
 import com.example.minipos.models.Supplier;
+import com.example.minipos.models.User;
 import com.example.minipos.roomdb.AppDatabase;
+import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProductsSupplierActivity extends AppCompatActivity {
@@ -32,6 +37,7 @@ public class ProductsSupplierActivity extends AppCompatActivity {
     AppDatabase room_db;
     List<Supplier> supplierList;
     TextView textViewSupplierWarning;
+    TextInputLayout textInputLayoutSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,9 +45,28 @@ public class ProductsSupplierActivity extends AppCompatActivity {
         setContentView(R.layout.activity_products_supplier);
         room_db = AppDatabase.getDbInstance(this);
         textViewSupplierWarning = findViewById(R.id.supplierWarning);
+        textInputLayoutSearch = findViewById(R.id.searchSupplier);
 
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);//remove keyboard
         setSupplerRecylerView();
+
+        textInputLayoutSearch.getEditText().addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                filter(s.toString());
+            }
+        });
+
     }
 
     private void setSupplerRecylerView() {
@@ -126,6 +151,24 @@ public class ProductsSupplierActivity extends AppCompatActivity {
 
     }
 
+    //filtering the list
+    private void filter(String text) {
+        List<Supplier> filteredList = new ArrayList<>();
+        for (User user : room_db.userDao().getAllUsers()) {
+            if (user.getFullname().toLowerCase().contains(text.toLowerCase())) {
+                if (room_db.supplierDao().countAllSuppliersByUserId(user.getUser_id()) > 0) {
+                    filteredList.add(room_db.supplierDao().findByUserId(user.getUser_id()));
+                    textViewSupplierWarning.setVisibility(View.INVISIBLE);
+                }
+            } else {
+                textViewSupplierWarning.setVisibility(View.VISIBLE);
+                textViewSupplierWarning.setText("No records found!");
+            }
+        }
+        if (adapter != null) {
+            adapter.filterList(filteredList);
+        }
+    }
 
     public void goback(View view) {
         onBackPressed();

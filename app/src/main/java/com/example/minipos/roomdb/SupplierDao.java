@@ -18,6 +18,9 @@ public interface SupplierDao {
     @Query("SELECT * FROM supplier WHERE supplier_id = :id")
     Supplier findBySupplierId(int id);
 
+    @Query("SELECT * FROM supplier WHERE user_id = :id")
+    Supplier findByUserId(int id);
+
     //    @Insert(onConflict = OnConflictStrategy.REPLACE)
     @Insert()
     void insertSupplier(Supplier supplier);
@@ -43,4 +46,8 @@ public interface SupplierDao {
     //count all car
     @Query("SELECT COUNT(*) FROM supplier ")
     int countAllSuppliers();
+
+    //count all car
+    @Query("SELECT COUNT(*) FROM supplier WHERE user_id = :id ")
+    int countAllSuppliersByUserId(int id);
 }

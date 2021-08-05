@@ -23,6 +23,18 @@ public interface Api {
             @Field("notes") String notes
     );
 
+    //add product supplier to server
+    @FormUrlEncoded
+    @POST("add_supplier")
+    Call<AllDataResponse> add_supplier(
+            @Field("fullname") String fullname,
+            @Field("phone") String phone,
+            @Field("email") String email,
+            @Field("address") String address,
+            @Field("notes") String notes,
+            @Field("is_default") int is_default
+    );
+
 
     //GET METHODS
 
@@ -43,11 +55,31 @@ public interface Api {
             @Field("notes") String notes
     );
 
+    //update product supplier to server
+    @FormUrlEncoded
+    @PUT("update_supplier")
+    Call<AllDataResponse> update_supplier(
+            @Field("supplier_id") int supplier_id,
+            @Field("user_id") int user_id,
+            @Field("fullname") String fullname,
+            @Field("phone") String phone,
+            @Field("email") String email,
+            @Field("address") String address,
+            @Field("notes") String notes,
+            @Field("is_default") int is_default
+    );
+
     //DELETE METHODS
 
     //delete category
     @DELETE("delete_category/{category_id}")
-    Call<AllDataResponse> deleteDeparture(
+    Call<AllDataResponse> deleteCategory(
             @Path("category_id") int category_id
+    );
+
+    //delete supplier
+    @DELETE("delete_supplier/{supplier_id}")
+    Call<AllDataResponse> deleteSupplier(
+            @Path("supplier_id") int supplier_id
     );
 }

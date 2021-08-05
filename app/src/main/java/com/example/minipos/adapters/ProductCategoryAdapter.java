@@ -279,57 +279,61 @@ public class ProductCategoryAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         room_db = AppDatabase.getDbInstance(context);
         progressDialog.showDialog("Deleting...");
 
-        call = RetrofitClient.getInstance().getApi().deleteDeparture(category_id);
-        call.enqueue(new Callback<AllDataResponse>() {
-            @Override
-            public void onResponse(Call<AllDataResponse> call, Response<AllDataResponse> response) {
-                AllDataResponse response1 = response.body();
-                progressDialog.closeDialog();
-                if (response1 != null) {
-                    if (!response1.isError()) {
-                        categoryList.remove(position);
-                        notifyItemRemoved(position);
+        if (checkInternet.isInternetConnected(context)) {
+            call = RetrofitClient.getInstance().getApi().deleteCategory(category_id);
+            call.enqueue(new Callback<AllDataResponse>() {
+                @Override
+                public void onResponse(Call<AllDataResponse> call, Response<AllDataResponse> response) {
+                    AllDataResponse response1 = response.body();
+                    progressDialog.closeDialog();
+                    if (response1 != null) {
+                        if (!response1.isError()) {
+                            categoryList.remove(position);
+                            notifyItemRemoved(position);
 
-                        userList = response1.getUsers();
-                        room_db.userDao().deleteAllUsers();
-                        for (int i = 0; i < userList.size(); i++) {
-                            room_db.userDao().insertUser(userList.get(i));
+                            userList = response1.getUsers();
+                            room_db.userDao().deleteAllUsers();
+                            for (int i = 0; i < userList.size(); i++) {
+                                room_db.userDao().insertUser(userList.get(i));
+                            }
+
+                            supplierList = response1.getSuppliers();
+                            room_db.supplierDao().deleteAllSuppliers();
+                            for (int i = 0; i < supplierList.size(); i++) {
+                                room_db.supplierDao().insertSupplier(supplierList.get(i));
+                            }
+
+                            categoryList = response1.getCategories();
+                            room_db.categoryDao().deleteAllCategorys();
+                            for (int i = 0; i < categoryList.size(); i++) {
+                                room_db.categoryDao().insertCategory(categoryList.get(i));
+                            }
+
+                            productList = response1.getProducts();
+                            room_db.productDao().getAllProducts();
+                            for (int i = 0; i < productList.size(); i++) {
+                                room_db.productDao().insertProduct(productList.get(i));
+                            }
+                            progressDialog.showSuccessToast(response1.getMessage());
+
+
+                        } else {
+                            progressDialog.showErrorToast(response1.getMessage());
                         }
-
-                        supplierList = response1.getSuppliers();
-                        room_db.supplierDao().deleteAllSuppliers();
-                        for (int i = 0; i < supplierList.size(); i++) {
-                            room_db.supplierDao().insertSupplier(supplierList.get(i));
-                        }
-
-                        categoryList = response1.getCategories();
-                        room_db.categoryDao().deleteAllCategorys();
-                        for (int i = 0; i < categoryList.size(); i++) {
-                            room_db.categoryDao().insertCategory(categoryList.get(i));
-                        }
-
-                        productList = response1.getProducts();
-                        room_db.productDao().getAllProducts();
-                        for (int i = 0; i < productList.size(); i++) {
-                            room_db.productDao().insertProduct(productList.get(i));
-                        }
-                        progressDialog.showSuccessToast(response1.getMessage());
-
-
                     } else {
-                        progressDialog.showErrorToast(response1.getMessage());
+                        progressDialog.showErrorToast("No server response!");
                     }
-                } else {
-                    progressDialog.showErrorToast("No server response!");
                 }
-            }
 
-            @Override
-            public void onFailure(Call<AllDataResponse> call, Throwable t) {
-                progressDialog.showErrorToast("No server response");
-                progressDialog.closeDialog();
-            }
-        });
+                @Override
+                public void onFailure(Call<AllDataResponse> call, Throwable t) {
+                    progressDialog.showErrorToast("No server response");
+                    progressDialog.closeDialog();
+                }
+            });
+        }else{
+            checkInternet.showInternetDialog(context);
+        }
     }
 
     //filter list'
