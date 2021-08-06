@@ -1,18 +1,27 @@
 package com.example.minipos.activities;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Canvas;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Pair;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,7 +31,10 @@ import com.example.minipos.R;
 import com.example.minipos.adapters.ProductsAdapter;
 import com.example.minipos.models.Product;
 import com.example.minipos.roomdb.AppDatabase;
+import com.example.minipos.utils.BetterActivityResult;
+import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProductsActivity extends AppCompatActivity {
@@ -32,6 +44,13 @@ public class ProductsActivity extends AppCompatActivity {
     final Context context = this;
     AppDatabase room_db;
 
+    //properties
+    private static final String[] CAMERA_PERMISSION = new String[]{Manifest.permission.CAMERA};
+    private static final int CAMERA_REQUEST_CODE = 10;
+    protected final BetterActivityResult<Intent, ActivityResult> activityLauncher = BetterActivityResult.registerActivityForResult(this);
+
+    TextInputLayout textInputLayoutSearch;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,9 +58,27 @@ public class ProductsActivity extends AppCompatActivity {
 
         room_db = AppDatabase.getDbInstance(this);
         textViewProductsWarning = findViewById(R.id.productWarning);
+        textInputLayoutSearch = findViewById(R.id.searchProductText);
 
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         setProductsRecycler();
+
+        textInputLayoutSearch.getEditText().addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                filter(s.toString());
+            }
+        });
 
     }
 
@@ -129,4 +166,59 @@ public class ProductsActivity extends AppCompatActivity {
     public void goback(View view) {
         onBackPressed();
     }
+
+    public void openBarcode(View view) {
+        if (hasCameraPermission()) {
+            Intent intent = new Intent(this, CameraActivity.class);
+
+            activityLauncher.launch(intent, result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    // There are no request codes
+                    Intent data = result.getData();
+                    if (data.getStringExtra("barcode") != null && !data.getStringExtra("barcode").isEmpty()) {
+                        textInputLayoutSearch.getEditText().setText(data.getStringExtra("barcode"));
+                    }
+
+                }
+            });
+
+
+        } else {
+            requestPermission();
+            Toast.makeText(this, "Please grant camera permission", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private boolean hasCameraPermission() {
+        return ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestPermission() {
+        ActivityCompat.requestPermissions(
+                this,
+                CAMERA_PERMISSION,
+                CAMERA_REQUEST_CODE
+        );
+    }
+
+    //filtering the list
+    private void filter(String text) {
+        List<Product> filteredList = new ArrayList<>();
+        for (Product product : room_db.productDao().getAllProducts()) {
+            if (product.getProduct_name().toLowerCase().contains(text.toLowerCase()) || product.getProduct_code().toLowerCase().contains(text.toLowerCase())) {
+                filteredList.add(product);
+                textViewProductsWarning.setVisibility(View.INVISIBLE);
+            } else {
+                textViewProductsWarning.setVisibility(View.VISIBLE);
+                textViewProductsWarning.setText("change query for more filter results!");
+            }
+        }
+        if (adapter != null) {
+            adapter.filterList(filteredList);
+        }
+    }
+
 }

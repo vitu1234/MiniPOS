@@ -17,18 +17,36 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.minipos.R;
 import com.example.minipos.activities.AddViewEditProductActivity;
 import com.example.minipos.api.RetrofitClient;
+import com.example.minipos.models.AllDataResponse;
+import com.example.minipos.models.Category;
 import com.example.minipos.models.Product;
+import com.example.minipos.models.Supplier;
+import com.example.minipos.models.User;
+import com.example.minipos.roomdb.AppDatabase;
+import com.example.minipos.utils.CheckInternet;
+import com.example.minipos.utils.MyProgressDialog;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     Context context;
-    List<Product> productList;
+    List<Category> categoryList;
+    private List<User> userList;
+    private List<Supplier> supplierList;
+    private List<Product> productList;
+    AppDatabase room_db;
+    CheckInternet checkInternet;
+    MyProgressDialog progressDialog;
+    public Call<AllDataResponse> call;
+
     private final int SHOW_MENU = 1;
     private final int HIDE_MENU = 2;
 
@@ -103,7 +121,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 public void onClick(View v) {
 
                     AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
-                    builder1.setMessage("Are you sure to delete product?");
+                    builder1.setMessage("Are you sure to delete product? All related info will be lost");
                     builder1.setTitle("Warning");
                     builder1.setCancelable(true);
 
@@ -111,7 +129,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             "Yes",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
+                                    deleteProduct(productList.get(position).getProduct_id(), position);
                                 }
                             });
 
@@ -172,6 +190,82 @@ public class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
         notifyDataSetChanged();
     }
+
+    //deletes supplier from server
+    private void deleteProduct(int product_id, int position) {
+        checkInternet = new CheckInternet(context);
+        progressDialog = new MyProgressDialog(context);
+        room_db = AppDatabase.getDbInstance(context);
+        progressDialog.showDialog("Deleting...");
+
+        if (checkInternet.isInternetConnected(context)) {
+            call = RetrofitClient.getInstance().getApi().deleteProduct(product_id);
+            call.enqueue(new Callback<AllDataResponse>() {
+                @Override
+                public void onResponse(Call<AllDataResponse> call, Response<AllDataResponse> response) {
+                    AllDataResponse response1 = response.body();
+                    progressDialog.closeDialog();
+                    if (response1 != null) {
+                        if (!response1.isError()) {
+                            supplierList.remove(position);
+                            notifyItemRemoved(position);
+
+                            userList = response1.getUsers();
+                            room_db.userDao().deleteAllUsers();
+                            for (int i = 0; i < userList.size(); i++) {
+                                room_db.userDao().insertUser(userList.get(i));
+                            }
+
+                            supplierList = response1.getSuppliers();
+                            room_db.supplierDao().deleteAllSuppliers();
+                            for (int i = 0; i < supplierList.size(); i++) {
+                                room_db.supplierDao().insertSupplier(supplierList.get(i));
+                            }
+
+                            categoryList = response1.getCategories();
+                            room_db.categoryDao().deleteAllCategorys();
+                            for (int i = 0; i < categoryList.size(); i++) {
+                                room_db.categoryDao().insertCategory(categoryList.get(i));
+                            }
+
+                            productList = response1.getProducts();
+                            room_db.productDao().deleteAllProducts();
+                            for (int i = 0; i < productList.size(); i++) {
+                                room_db.productDao().insertProduct(productList.get(i));
+                            }
+                            progressDialog.showSuccessToast(response1.getMessage());
+
+
+                        } else {
+                            progressDialog.showErrorToast(response1.getMessage());
+                        }
+                    } else {
+                        progressDialog.showErrorToast("No server response!");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<AllDataResponse> call, Throwable t) {
+                    progressDialog.showErrorToast("No server response");
+                    progressDialog.closeDialog();
+                }
+            });
+        } else {
+            checkInternet.showInternetDialog(context);
+        }
+    }
+
+    //filter list'
+    // method for filtering our recyclerview items.
+    public void filterList(List<Product> productList) {
+        // below line is to add our filtered
+        // list in our course array list.
+        this.productList = productList;
+        // below line is to notify our adapter
+        // as change in recycler view data.
+        notifyDataSetChanged();
+    }
+
 
     public void swapItems(List<Product> productList) {
         this.productList = productList;

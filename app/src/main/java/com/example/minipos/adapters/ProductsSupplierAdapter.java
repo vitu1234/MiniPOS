@@ -231,7 +231,7 @@ public class ProductsSupplierAdapter extends RecyclerView.Adapter<RecyclerView.V
                             }
 
                             productList = response1.getProducts();
-                            room_db.productDao().getAllProducts();
+                            room_db.productDao().deleteAllProducts();
                             for (int i = 0; i < productList.size(); i++) {
                                 room_db.productDao().insertProduct(productList.get(i));
                             }
