@@ -312,13 +312,16 @@ public class AddViewEditProductActivity extends AppCompatActivity {
                     Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
                     circleImageViewItemPic.setImageBitmap(myBitmap);
 //                    Toast.makeText(getApplicationContext(), "Media captured.", Toast.LENGTH_SHORT).show();
-                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                        if (checkInternet.isInternetConnected(this)) {
-                            changeProductPicture();
-                        } else {
-                            checkInternet.showInternetDialog(this);
-                        }
-                    }, 100);
+                    if (product_id != -1) {
+                        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                            if (checkInternet.isInternetConnected(this)) {
+                                changeProductPicture();
+                            } else {
+                                checkInternet.showInternetDialog(this);
+                            }
+                        }, 100);
+                    }
+
 
                 }
 

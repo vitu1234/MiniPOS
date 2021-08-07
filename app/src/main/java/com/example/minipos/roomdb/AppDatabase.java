@@ -7,11 +7,12 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 import com.example.minipos.models.Category;
+import com.example.minipos.models.POS;
 import com.example.minipos.models.Product;
 import com.example.minipos.models.Supplier;
 import com.example.minipos.models.User;
 
-@Database(entities = {User.class, Product.class, Supplier.class, Category.class}, exportSchema = false, version = 1)
+@Database(entities = {User.class, Product.class, Supplier.class, Category.class, POS.class}, exportSchema = false, version = 1)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract UserDao userDao();
 
@@ -20,6 +21,8 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract CategoryDao categoryDao();
 
     public abstract ProductDao productDao();
+
+    public abstract PosDao posDao();
 
 
     private static AppDatabase INSTANCE;

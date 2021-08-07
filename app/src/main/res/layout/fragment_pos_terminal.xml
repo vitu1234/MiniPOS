@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/posParentLayout"
     android:background="@color/white"
     android:orientation="vertical"
     tools:context=".fragments.PosTerminalFragment">
@@ -12,7 +12,14 @@
         android:layout_width="match_parent"
         android:layout_height="240dp"
         android:background="@color/colorPrimary" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
 
+        <requestFocus />
+    </View>
     <!--Top Header Layout-->
     <LinearLayout
         android:id="@+id/topbar"
@@ -24,101 +31,133 @@
         android:padding="16dp">
 
         <LinearLayout
-            android:background="@drawable/circularbordersolid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/circularbordersolid"
             android:orientation="horizontal">
+
             <ImageView
-                android:padding="8dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="8dp"
+                android:id="@+id/scan_barcode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/barcode_scanner_32"
-                android:id="@+id/scan_barcode"/>
-           <com.google.android.material.textfield.TextInputLayout
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:layout_marginEnd="15dp"
-               >
-               <com.google.android.material.textfield.TextInputEditText
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content"
-                   android:inputType="text"
-                   style="@style/Widget.AppCompat.SearchView"/>
-           </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="20dp"
+                android:padding="8dp"
+                android:src="@drawable/barcode_scanner_32" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/posSearchProduct"
+                android:hint="Enter product name/code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="15dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    style="@style/Widget.AppCompat.SearchView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
-
-        android:layout_below="@id/topbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/topbar"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/circularbordersolid"
         android:orientation="vertical">
-        <androidx.core.widget.NestedScrollView
 
-            android:layout_weight="1"
-            android:id="@+id/scrollList"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="none">
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/lightWhite"
+            android:padding="5dp">
+
+            <ImageView
+                android:id="@+id/sortListImageview"
+                android:clickable="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:padding="8dp"
+                android:src="@drawable/sort_icon_24" />
+
+            <TextView
+                android:layout_marginEnd="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerInParent="true"
+                android:text="Long press for custom qty"
+                android:textSize="12sp" />
+
+        </RelativeLayout>
+
 
             <LinearLayout
+                android:layout_weight="1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp">
+                android:orientation="vertical">
 
+                <TextView
+                    android:id="@+id/posWarning"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins"
+                    android:text="No product categories added"
+                    android:textAlignment="center"
+                    android:textColor="@color/red"
+                    android:textSize="12sp"
+                    android:visibility="gone" />
                 <!--Top Profile Section -->
-                <LinearLayout
+                <androidx.recyclerview.widget.RecyclerView
+
+                    android:id="@+id/productsListPos"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/circularbordersolid"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/productsList"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
-                </LinearLayout>
-
-
-
-
+                    android:layout_marginTop="5dp" />
             </LinearLayout>
 
 
-        </androidx.core.widget.NestedScrollView>
+
         <LinearLayout
-            android:padding="16dp"
-            android:layout_weight="0"
+            android:background="@color/lightWhite"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/scrollList"
+            android:layout_weight="0"
             android:orientation="horizontal"
-            android:layout_below="@+id/scrollList">
+            android:padding="16dp">
+
             <com.google.android.material.button.MaterialButton
-                android:layout_marginEnd="10dp"
-                android:backgroundTint="@color/red"
+                android:visibility="gone"
+                android:id="@+id/discardBtn"
+                android:paddingTop="7dp"
+                android:paddingBottom="7dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Discard"/>
+                android:layout_marginEnd="10dp"
+                android:backgroundTint="@color/red"
+                android:text="@string/discard_txt" />
+
             <TextView
+                android:id="@+id/itemsTotal"
+                android:clickable="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Items = MWK 0.00"
-                android:textColor="@color/white"
-                android:fontFamily="@font/poppins_bold"
-                android:padding="7dp"
-                android:textAlignment="center"
+                android:background="@drawable/circular_grey_bordersolid"
                 android:backgroundTint="@color/colorPrimary"
-                android:background="@drawable/circular_grey_bordersolid"/>
+                android:fontFamily="@font/poppins_bold"
+                android:padding="10dp"
+                android:text="No Items: K0.00"
+                android:textAlignment="center"
+                android:textColor="@color/white" />
         </LinearLayout>
 
 

@@ -23,4 +23,9 @@
     <string name="supplier">Supplier</string>
     <string name="add_supplier_txt">Add Supplier</string>
     <string name="products">Products</string>
+    <string name="quantity_txt">Quantity</string>
+    <string name="stock_remaining_txt">Stock Remaining</string>
+    <string name="product_name_sample_txt">Vaseline</string>
+    <string name="prod_price">Price</string>
+    <string name="discard_txt">Discard</string>
 </resources>

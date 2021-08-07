@@ -183,7 +183,7 @@ public class ProductCategoryAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 public void onClick(View v) {
 
                     AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
-                    builder1.setMessage("Are you sure to delete? Products related to this category will also be deleted");
+                    builder1.setMessage("Are you sure to delete  " + categoryList.get(position).getCategory_name() + "? Products related to this category will also be deleted");
                     builder1.setTitle("Warning");
                     builder1.setCancelable(true);
 
@@ -331,7 +331,7 @@ public class ProductCategoryAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     progressDialog.closeDialog();
                 }
             });
-        }else{
+        } else {
             checkInternet.showInternetDialog(context);
         }
     }

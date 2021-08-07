@@ -39,12 +39,14 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         menu_icon = findViewById(R.id.menu_icon_btn);
         textVietitle = findViewById(R.id.app_title);
 
-
+        textVietitle.setText("POS Terminal");
         contentView = findViewById(R.id.content);
 //        changeAppTitleText("Magik Rentals");
 
         //opena navigation drawer
         openNavigationDrawer();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new PosTerminalFragment(), null).commit();
+
     }
 
     //    NAVIGATION DRAWER

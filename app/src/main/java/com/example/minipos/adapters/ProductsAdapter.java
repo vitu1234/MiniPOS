@@ -121,7 +121,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 public void onClick(View v) {
 
                     AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
-                    builder1.setMessage("Are you sure to delete product? All related info will be lost");
+                    builder1.setMessage("Are you sure to delete "+productList.get(position).getProduct_name()+"? All related info will be lost");
                     builder1.setTitle("Warning");
                     builder1.setCancelable(true);
 
