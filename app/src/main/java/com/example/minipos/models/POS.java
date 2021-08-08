@@ -17,10 +17,13 @@ public class POS {
     @ColumnInfo(name = "total")
     double total;
 
-    public POS(int product_id, int qty, double total) {
+    private boolean showMenu = false;
+
+    public POS(int product_id, int qty, double total, boolean showMenu) {
         this.product_id = product_id;
         this.qty = qty;
         this.total = total;
+        this.showMenu = showMenu;
     }
 
     public POS() {
@@ -56,5 +59,13 @@ public class POS {
 
     public void setTotal(double total) {
         this.total = total;
+    }
+
+    public boolean isShowMenu() {
+        return showMenu;
+    }
+
+    public void setShowMenu(boolean showMenu) {
+        this.showMenu = showMenu;
     }
 }

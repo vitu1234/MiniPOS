@@ -15,6 +15,9 @@ public interface PosDao {
     @Query("SELECT *FROM pos")
     List<POS> getAllPos();
 
+    @Query("SELECT *FROM pos GROUP BY product_id")
+    List<POS> getAllPosGrouped();
+
     @Query("SELECT * FROM pos WHERE product_id = :id")
     POS findByPosId(int id);
 
@@ -45,6 +48,10 @@ public interface PosDao {
     //count car
     @Query("SELECT * FROM pos WHERE product_id = :id")
     int getSinglePosCount(int id);
+
+    @Query("SELECT SUM(qty_id) FROM pos WHERE product_id = :id")
+    int totalProQtyPosCount(int id);
+
 
     //count all car
     @Query("SELECT COUNT(*) FROM pos ")

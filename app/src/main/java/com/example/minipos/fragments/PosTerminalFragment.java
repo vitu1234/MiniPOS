@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.minipos.R;
 import com.example.minipos.activities.CameraActivity;
+import com.example.minipos.activities.SalesReceiptCheckoutActivity;
 import com.example.minipos.adapters.TerminalAdapter;
 import com.example.minipos.models.POS;
 import com.example.minipos.models.Product;
@@ -34,9 +35,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 public class PosTerminalFragment extends Fragment {
@@ -44,6 +43,7 @@ public class PosTerminalFragment extends Fragment {
     TerminalAdapter adapter;
     AppDatabase roomdb;
     List<Product> productList;
+    List<POS> posList;
     public TextView textViewWarning, textViewTotalItems;
     TextInputLayout textInputLayoutSearch;
     MyProgressDialog progressDialog;
@@ -117,10 +117,23 @@ public class PosTerminalFragment extends Fragment {
             }
         });
         imageViewBarcode.setOnClickListener(v -> openBarcode(view));
+        buttonDiscard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                roomdb.posDao().deleteAllPos();
+                buttonDiscard.setVisibility(View.GONE);
+                textViewTotalItems.setText("No Items: K0.00");
+            }
+        });
 
+        posList = roomdb.posDao().getAllPos();
+        for (int i = 0; i < posList.size(); i++) {
+            total += posList.get(i).getTotal();
+        }
 
         textViewTotalItems.setOnClickListener(v -> {
-            List<POS> posList = roomdb.posDao().getAllPos();
+            posList.clear();
+            posList = roomdb.posDao().getAllPos();
             for (int i = 0; i < posList.size(); i++) {
                 total += posList.get(i).getTotal();
             }
@@ -131,6 +144,7 @@ public class PosTerminalFragment extends Fragment {
                 progressDialog.showErrorToast("No items!");
             }
         });
+
         sortListImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -144,7 +158,9 @@ public class PosTerminalFragment extends Fragment {
     }
 
     private void checkOutReceipt() {
-        progressDialog.showSuccessToast("show checkout receipt");
+        total =0;
+        Intent intent = new Intent(this.getContext(), SalesReceiptCheckoutActivity.class);
+        getContext().startActivity(intent);
     }
 
     private void setRecyclerView() {
@@ -220,7 +236,7 @@ public class PosTerminalFragment extends Fragment {
         );
     }
 
-    public void sortList(){
+    public void sortList() {
 
         adapter.sortList(sortByName(productList));
     }
