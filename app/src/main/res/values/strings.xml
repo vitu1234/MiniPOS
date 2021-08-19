@@ -28,4 +28,9 @@
     <string name="product_name_sample_txt">Vaseline</string>
     <string name="prod_price">Price</string>
     <string name="discard_txt">Discard</string>
+    <string name="due_amount">Due Amount</string>
+    <string name="apply_vat">Apply VAT</string>
+    <string name="inventory">Inventory</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="reset_changes">Reset</string>
 </resources>

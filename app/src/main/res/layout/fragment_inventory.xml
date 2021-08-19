@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/posParentLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/posParentLayout"
     android:background="@color/white"
     android:orientation="vertical"
-    tools:context=".fragments.PosTerminalFragment">
+    tools:context=".fragments.InventoryFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="240dp"
         android:background="@color/colorPrimary" />
+
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -47,11 +48,11 @@
                 android:src="@drawable/barcode_scanner_32" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/posSearchProduct"
-                android:hint="Enter product name/code"
+                android:id="@+id/inventorySearchProduct"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="15dp">
+                android:layout_marginEnd="15dp"
+                android:hint="Enter product name/code">
 
                 <com.google.android.material.textfield.TextInputEditText
                     style="@style/Widget.AppCompat.SearchView"
@@ -80,88 +81,85 @@
             android:padding="5dp">
 
             <ImageView
+
                 android:id="@+id/sortListImageview"
-                android:clickable="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
                 android:padding="8dp"
                 android:src="@drawable/sort_icon_24" />
 
             <TextView
-                android:layout_marginEnd="5dp"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerInParent="true"
-                android:text="Long press for custom qty"
+                android:layout_marginEnd="5dp"
+                android:text="Quick item qty change"
                 android:textSize="12sp" />
 
         </RelativeLayout>
 
 
-            <LinearLayout
-                android:layout_weight="1"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/inventoryWarning"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins"
+                android:text="No product categories added"
+                android:textAlignment="center"
+                android:textColor="@color/red"
+                android:textSize="12sp"
+                android:visibility="gone" />
+            <!--Top Profile Section -->
+            <androidx.recyclerview.widget.RecyclerView
+
+                android:id="@+id/productsListInventory"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/posWarning"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppins"
-                    android:text="No product categories added"
-                    android:textAlignment="center"
-                    android:textColor="@color/red"
-                    android:textSize="12sp"
-                    android:visibility="gone" />
-                <!--Top Profile Section -->
-                <androidx.recyclerview.widget.RecyclerView
-
-                    android:id="@+id/productsListPos"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="5dp" />
-            </LinearLayout>
+                android:layout_marginTop="5dp" />
+        </LinearLayout>
 
 
 
         <LinearLayout
-            android:background="@color/lightWhite"
+            android:visibility="gone"
+            android:id="@+id/buttonsContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/scrollList"
             android:layout_weight="0"
             android:orientation="horizontal"
-            android:padding="16dp">
-
+            android:paddingBottom="16dp"
+            android:paddingTop="16dp">
             <com.google.android.material.button.MaterialButton
-                android:visibility="gone"
-                android:id="@+id/discardBtn"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="1"
+                android:id="@+id/saveChangesBtn"
                 android:paddingTop="7dp"
                 android:paddingBottom="7dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:backgroundTint="@color/red"
-                android:text="@string/discard_txt" />
-
-            <TextView
-                android:id="@+id/itemsTotal"
-                android:clickable="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/circular_grey_bordersolid"
                 android:backgroundTint="@color/colorPrimary"
-                android:fontFamily="@font/poppins_bold"
-                android:padding="10dp"
-                android:text="No Items: K0.00"
-                android:textAlignment="center"
-                android:textColor="@color/white" />
+                android:text="@string/save_changes" />
+            <com.google.android.material.button.MaterialButton
+
+                android:layout_weight="1"
+                android:id="@+id/resetChangesBtn"
+                android:paddingTop="7dp"
+                android:paddingBottom="7dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/red"
+                android:text="@string/reset_changes" />
         </LinearLayout>
-
-
     </LinearLayout>
 
 

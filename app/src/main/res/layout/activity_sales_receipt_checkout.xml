@@ -178,8 +178,32 @@
                                 android:textAlignment="textEnd"
                                 android:textColor="@color/colorPrimary" />
                         </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="15dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/roboto_bold"
+                                android:text="Total" />
+
+                            <TextView
+                                android:id="@+id/saleTotal"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/roboto"
+                                android:text="K2000"
+                                android:textAlignment="textEnd"
+                                android:textColor="@color/colorPrimary" />
+                        </LinearLayout>
 
                         <LinearLayout
+                            android:visibility="invisible"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="15dp"
@@ -191,8 +215,9 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:fontFamily="@font/roboto"
-                                android:text="Apply VAT" />
+                                android:text="@string/apply_vat" />
                         </LinearLayout>
+
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -208,13 +233,13 @@
                                 android:text="Paid Amount" />
 
                             <EditText
-                                android:inputType="numberDecimal"
+                                android:inputType="number"
                                 android:id="@+id/salePaidAmount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:background="@drawable/bottom_line_border"
-                                android:text="0.00"
+                                android:text="0"
                                 android:textAlignment="textEnd"
                                 android:textColor="@color/colorPrimary" />
                         </LinearLayout>
@@ -243,29 +268,7 @@
                                 android:textColor="@color/red" />
                         </LinearLayout>
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="15dp"
-                            android:orientation="horizontal">
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:fontFamily="@font/roboto_bold"
-                                android:text="Total" />
-
-                            <TextView
-                                android:id="@+id/saleTotal"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:fontFamily="@font/roboto"
-                                android:text="K2000"
-                                android:textAlignment="textEnd"
-                                android:textColor="@color/colorPrimary" />
-                        </LinearLayout>
 
                         <RelativeLayout
                             android:layout_width="match_parent"
@@ -275,7 +278,7 @@
                                 android:id="@+id/salePrintReceipt"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_alignParentEnd="true"
+                                android:layout_alignParentStart="true"
                                 android:drawableStart="@drawable/print__icon_24"
                                 android:fontFamily="@font/roboto"
                                 android:text="Print Receipt" />

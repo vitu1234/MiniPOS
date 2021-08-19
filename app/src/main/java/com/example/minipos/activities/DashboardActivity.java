@@ -15,6 +15,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import com.example.minipos.R;
+import com.example.minipos.fragments.InventoryFragment;
 import com.example.minipos.fragments.ManagementsFragment;
 import com.example.minipos.fragments.PosTerminalFragment;
 import com.google.android.material.navigation.NavigationView;
@@ -119,8 +120,9 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
             case R.id.pos_terminal:
                 displayFragment(new PosTerminalFragment());
                 break;
-            case R.id.stock_in:
-                textVietitle.setText("Stock In");
+            case R.id.inventory:
+                textVietitle.setText("Inventory");
+                displayFragment(new InventoryFragment());
                 break;
             case R.id.managements:
                 displayFragment(new ManagementsFragment());

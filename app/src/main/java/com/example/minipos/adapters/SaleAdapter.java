@@ -2,23 +2,26 @@ package com.example.minipos.adapters;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.minipos.R;
+import com.example.minipos.activities.SalesReceiptCheckoutActivity;
 import com.example.minipos.models.POS;
 import com.example.minipos.models.Product;
 import com.example.minipos.roomdb.AppDatabase;
+import com.example.minipos.utils.MyProgressDialog;
 
 import java.util.List;
 
@@ -29,14 +32,17 @@ public class SaleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<POS> posList;
     AppDatabase room_db;
-
+    MyProgressDialog progressDialog;
+    AlertDialog alertDialog;
 
     private final int SHOW_MENU = 1;
     private final int HIDE_MENU = 2;
+    SalesReceiptCheckoutActivity salesReceiptCheckoutActivity;
 
-    public SaleAdapter(Context context, List<POS> posList) {
+    public SaleAdapter(SalesReceiptCheckoutActivity salesReceiptCheckoutActivity, Context context, List<POS> posList) {
         this.context = context;
         this.posList = posList;
+        this.salesReceiptCheckoutActivity = salesReceiptCheckoutActivity;
     }
 
     @NonNull
@@ -64,7 +70,7 @@ public class SaleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ((MyViewHolder) holder).textViewName.setText(entity.getProduct_name());
             ((MyViewHolder) holder).textViewQty.setText("" + qty);
             ((MyViewHolder) holder).textViewPrice.setText("K " + entity.getProduct_price());
-            ((MyViewHolder) holder).textViewTotal.setText("K " + (qty*(Integer.parseInt(entity.getProduct_price()))));
+            ((MyViewHolder) holder).textViewTotal.setText("K " + (qty * (Integer.parseInt(entity.getProduct_price()))));
 
             ((MyViewHolder) holder).container.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -77,6 +83,7 @@ public class SaleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         if (holder instanceof MenuViewHolder) {
             ((MenuViewHolder) holder).textViewProductNameMenu.setText(entity.getProduct_name());
+            ((MenuViewHolder) holder).textViewProductNameMenu.setVisibility(View.VISIBLE);
             //Menu Actions
             ((MenuViewHolder) holder).buttonClose.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -89,8 +96,7 @@ public class SaleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 @Override
                 public void onClick(View v) {
                     closeMenu();
-                    Toast.makeText(context, "edit product quantity", Toast.LENGTH_SHORT).show();
-
+                    viewProductQtyDetails(position);
 
                 }
             });
@@ -100,7 +106,7 @@ public class SaleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 public void onClick(View v) {
 
                     AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
-                    builder1.setMessage("Are you sure to delete ?");
+                    builder1.setMessage("Are you sure to delete " + entity.getProduct_name() + " from the list?");
                     builder1.setTitle("Warning");
                     builder1.setCancelable(true);
 
@@ -108,7 +114,7 @@ public class SaleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                             "Yes",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
-                                    deleteProduct(posList.get(position).getRoom_pos_id(), position);
+                                    deleteProduct(posList.get(position).getProduct_id(), position);
                                 }
                             });
 
@@ -170,9 +176,16 @@ public class SaleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         notifyDataSetChanged();
     }
 
-    //deletes supplier from server
+    //deletes pos item
     private void deleteProduct(int product_id, int position) {
-        Toast.makeText(context, "delete product", Toast.LENGTH_SHORT).show();
+        room_db = AppDatabase.getDbInstance(context);
+        room_db.posDao().deletePosByProdID(product_id);
+        posList.remove(position);
+        notifyItemRemoved(position);
+
+        this.posList = room_db.posDao().getAllPosGrouped();
+        notifyDataSetChanged();
+        salesReceiptCheckoutActivity.setViews();
     }
 
     //filter list'
@@ -190,6 +203,129 @@ public class SaleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void swapItems(List<POS> posList) {
         this.posList = posList;
         notifyDataSetChanged();
+    }
+
+    private void viewProductQtyDetails(int position) {
+
+        POS pos = posList.get(position);
+        Product entity = room_db.productDao().findByProductId(pos.getProduct_id());
+        int qty1 = room_db.posDao().totalProQtyPosCount(pos.getProduct_id());
+
+        TextView textViewprodNameTitle, textViewQtyStock, textViewCusQty, textViewPrice;
+        Button buttonAddQty, buttonReduceQty;
+        // get prompts.xml view
+        LayoutInflater li = LayoutInflater.from(context);
+        room_db = AppDatabase.getDbInstance(context);
+        progressDialog = new MyProgressDialog(context);
+        View promptsView = li.inflate(R.layout.product_qty_details_prompt, null);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                context);
+
+        // set prompts.xml to alertdialog builder
+        alertDialogBuilder.setView(promptsView);
+
+
+        textViewprodNameTitle = promptsView.findViewById(R.id.prodPromptTitle);
+        textViewQtyStock = promptsView.findViewById(R.id.prodPromptStock);
+        textViewCusQty = promptsView.findViewById(R.id.prodPromptQty);
+        textViewPrice = promptsView.findViewById(R.id.prodPromptPrice);
+        buttonReduceQty = promptsView.findViewById(R.id.button2f);
+        buttonAddQty = promptsView.findViewById(R.id.button3);
+
+        textViewprodNameTitle.setText(entity.getProduct_name());
+        textViewQtyStock.setText(qty1 + "");
+        textViewPrice.setText("K" + (qty1 * (Integer.parseInt(entity.getProduct_price()))));
+
+
+        textViewCusQty.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                int new_qty = Integer.parseInt(s.toString());
+                if (new_qty > Integer.parseInt(entity.getProduct_quantity())) {
+                    progressDialog.showErrorToast("The requested quantiy is greater than remaining stock!");
+                } else {
+//                    cust_qty = new_qty;
+                    double new_price = (double) Integer.parseInt(entity.getProduct_price()) * new_qty;
+                    textViewPrice.setText("K" + new_price + "");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        buttonAddQty.setOnClickListener(v -> {
+            int qty = Integer.parseInt(textViewCusQty.getText().toString());
+            if (qty < Integer.parseInt(entity.getProduct_quantity())) {
+                textViewCusQty.setText(qty + 1 + "");
+            } else {
+                progressDialog.showErrorToast("The requested quantity is greater than remaining stock!");
+            }
+
+        });
+
+        buttonReduceQty.setOnClickListener(v -> {
+            int qty = Integer.parseInt(textViewCusQty.getText().toString());
+            int new_qty = qty - 1;
+
+            if (new_qty == 0) {
+                textViewCusQty.setText("1");
+            } else {
+                textViewCusQty.setText(new_qty + "");
+            }
+        });
+
+
+        // set dialog message
+        alertDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton("Ok",
+                        (dialog, id) -> {
+                            //save here
+                        })
+                .setNegativeButton("Cancel",
+                        (dialog, id) -> dialog.cancel());
+
+        // create alert dialog
+        alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
+        alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(context.getResources().getColor(R.color.red));
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(context.getResources().getColor(R.color.colorPrimary));
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            /*if (room_db.posDao().getSinglePosCount(productList.get(position).getProduct_id()) > 0) {
+                room_db.posDao().deletePosByProdID(productList.get(position).getProduct_id());
+            }*/
+            room_db.posDao().deletePosByProdID(pos.getProduct_id());
+            POS pos1 = new POS();
+            pos1.setProduct_id(entity.getProduct_id());
+            pos1.setQty(Integer.parseInt(textViewCusQty.getText().toString()));
+            pos1.setTotal((double) Integer.parseInt(entity.getProduct_price()) * Integer.parseInt(textViewCusQty.getText().toString()));
+            room_db.posDao().insertPos(pos1);
+
+            double total = 0;
+            List<POS> posList = room_db.posDao().getAllPos();
+            for (int i = 0; i < posList.size(); i++) {
+                total += posList.get(i).getTotal();
+            }
+
+//            posTerminalFragment.textViewTotalItems.setText("Items: K" + total);
+//            posTerminalFragment.buttonDiscard.setVisibility(View.VISIBLE);
+            this.posList = room_db.posDao().getAllPosGrouped();
+            notifyDataSetChanged();
+            salesReceiptCheckoutActivity.setViews();
+            alertDialog.dismiss();
+
+        });
     }
 
 

@@ -37,8 +37,9 @@ public class SalesReceiptCheckoutActivity extends AppCompatActivity {
     public EditText editTextDiscount, editTextPaidAmount;
 
     CheckBox checkBoxVAT, checkBoxPrint;
-    double sub_total_amount = 0;
-    double total_amount = 0;
+    public double sub_total_amount = 0;
+    public double total_amount = 0, VAT, total_final;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,7 @@ public class SalesReceiptCheckoutActivity extends AppCompatActivity {
         checkBoxVAT = findViewById(R.id.saleVATCheck);
         checkBoxPrint = findViewById(R.id.salePrintReceipt);
 
+        VAT = 16.7;
         room_db = AppDatabase.getDbInstance(this);
 
         setViews();
@@ -67,14 +69,33 @@ public class SalesReceiptCheckoutActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (Float.parseFloat(s.toString()) != 0) {
-                    double discount = (double) Integer.parseInt(s.toString());
-                    double percentage = (total_amount * discount) / 100;
-                    editTextDiscount.setText(percentage + "");
-                    total_amount = percentage;
-                    textViewTotal.setText("K " + total_amount);
+                if (s.length() > 0) {
+                    if (Float.parseFloat(s.toString()) != 0) {
+                        if (Float.parseFloat(s.toString()) > 100) {
+                            editTextDiscount.requestFocus();
+                            editTextDiscount.setError("Cannot exceed 100%");
+                            textViewTotal.setText("K " + sub_total_amount);
+                            total_amount = sub_total_amount;
+
+                        } else {
+                            if (Float.parseFloat(s.toString()) == 100) {
+                                textViewTotal.setText("K 0.00");
+                            } else {
+                                double discount = (double) Integer.parseInt(s.toString());
+                                double percentage = (sub_total_amount * discount) / 100;
+                                textViewTotal.setText("K " + percentage);
+                                total_amount = percentage;
+                            }
+
+                        }
+
+                    } else {
+                        textViewTotal.setText("K " + sub_total_amount);
+                        total_amount = sub_total_amount;
+                    }
                 } else {
-                    textViewTotal.setText("K " + total_amount);
+                    editTextDiscount.requestFocus();
+                    editTextDiscount.setError("required field");
                 }
 
 
@@ -93,8 +114,16 @@ public class SalesReceiptCheckoutActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                double paid_amount = (double) Float.parseFloat(s.toString());
-                textViewChange.setText("K " + (total_amount - paid_amount));
+                if (s.length() > 0) {
+                    double paid_amount = Integer.parseInt(s.toString());
+                    if (paid_amount > 0) {
+
+                        double change = paid_amount - total_amount;
+                        textViewChange.setText("K " + change);
+
+                    }
+                }
+
             }
 
             @Override
@@ -107,12 +136,8 @@ public class SalesReceiptCheckoutActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    double vat = 16.50;
-                    double percentage = (total_amount * vat) / 100;
-                    total_amount = total_amount + percentage;
-                    textViewTotal.setText("K " + total_amount);
+
                 } else {
-                    textViewTotal.setText("K " + total_amount);
                 }
             }
         });
@@ -120,6 +145,8 @@ public class SalesReceiptCheckoutActivity extends AppCompatActivity {
     }
 
     public void setViews() {
+        sub_total_amount = 0;
+        total_amount = 0;
         posList = room_db.posDao().getAllPosGrouped();
         for (int position = 0; position < posList.size(); position++) {
             POS pos = posList.get(position);
@@ -133,14 +160,14 @@ public class SalesReceiptCheckoutActivity extends AppCompatActivity {
 
         textViewSubTotal.setText("K " + sub_total_amount);
         textViewChange.setText("K 0.00");
-        textViewTotal.setText("K " + sub_total_amount);
+        textViewTotal.setText("K " + total_amount);
     }
 
 
     private void setSalesRecylerView() {
 
         if (room_db.posDao().countAllPos() > 0) {
-            adapter = new SaleAdapter(this, posList);
+            adapter = new SaleAdapter(this, this, posList);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));//line between items
             recyclerView.setAdapter(adapter);

@@ -2,7 +2,11 @@ package com.example.minipos.api;
 
 import com.example.minipos.models.AllDataResponse;
 
+import java.util.List;
+import java.util.Map;
+
 import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.DELETE;
 import retrofit2.http.Field;
@@ -12,6 +16,7 @@ import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Part;
+import retrofit2.http.PartMap;
 import retrofit2.http.Path;
 
 public interface Api {
@@ -139,6 +144,23 @@ public interface Api {
             @Field("product_description") String product_description
 
     );
+
+    //update inventory qty to server
+    @FormUrlEncoded
+    @PUT("update_inventory")
+    Call<AllDataResponse> update_inventory(
+            @Field("product_id[]") List<Integer> product_id,
+            @Field("qty[]") List<Integer> qty
+
+    );
+
+    @Multipart
+    @POST("/")
+    Call<AllDataResponse> yourMethod(
+            @PartMap() Map<String, RequestBody> partMap,
+            @PartMap() Map<String, RequestBody> map,
+            @Part MultipartBody.Part file,
+            @Part("items[]") List<String> items);
 
     //change product picture
     @Multipart

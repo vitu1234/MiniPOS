@@ -43,6 +43,7 @@ public class ProductsActivity extends AppCompatActivity {
     TextView textViewProductsWarning;
     final Context context = this;
     AppDatabase room_db;
+    List<Product> productList;
 
     //properties
     private static final String[] CAMERA_PERMISSION = new String[]{Manifest.permission.CAMERA};
@@ -84,7 +85,7 @@ public class ProductsActivity extends AppCompatActivity {
 
     private void setProductsRecycler() {
         if (room_db.productDao().countAllProducts() > 0) {
-            List<Product> productList = room_db.productDao().getAllProducts();
+            productList = room_db.productDao().getAllProducts();
 
             adapter = new ProductsAdapter(this, productList);
 
@@ -221,4 +222,12 @@ public class ProductsActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        Toast.makeText(context, "resumesd", Toast.LENGTH_SHORT).show();
+        productList.clear();
+        productList = room_db.productDao().getAllProducts();
+        adapter.filterList(productList);
+    }
 }
