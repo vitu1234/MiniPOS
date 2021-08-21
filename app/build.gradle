@@ -80,5 +80,13 @@ dependencies {
 
     implementation 'me.dm7.barcodescanner:zbar:1.9.13'
 
+    // Add this line if was not added before.
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+//    implementation files('libs/com.datecs.api.jar')
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
+    //shimmer
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
+
 
 }

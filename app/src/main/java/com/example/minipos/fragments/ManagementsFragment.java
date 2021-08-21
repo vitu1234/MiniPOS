@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.minipos.R;
 import com.example.minipos.adapters.ManagementsRecyclerAdapter;
-import com.example.minipos.models.Management;
+import com.example.minipos.models.StaticGeneralModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,7 @@ import java.util.List;
 public class ManagementsFragment extends Fragment {
 
     RecyclerView recyclerViewManagement;
-    List<Management> managementList;
+    List<StaticGeneralModel> staticGeneralModelList;
     ManagementsRecyclerAdapter managementsRecyclerAdapter;
 
     public ManagementsFragment() {
@@ -54,11 +54,11 @@ public class ManagementsFragment extends Fragment {
         recyclerViewManagement = view.findViewById(R.id.managements_recycler_list);
 
         //add values to model
-        managementList = new ArrayList<>();
-        managementList.add(new Management(1, R.drawable.product_24_icon, "Products", "View list, create, edit or delete products"));
-        managementList.add(new Management(2, R.drawable.category_icon, "Categories", "View list, create, edit or delete product categories"));
-        managementList.add(new Management(3, R.drawable.people_groups_icon, "Customers", "View list, create, edit or delete customers"));
-        managementList.add(new Management(4, R.drawable.supplier_24_icon, "Suppliers", "View list, create, edit or delete suppliers"));
+        staticGeneralModelList = new ArrayList<>();
+        staticGeneralModelList.add(new StaticGeneralModel(1, R.drawable.product_24_icon, "Products", "View list, create, edit or delete products"));
+        staticGeneralModelList.add(new StaticGeneralModel(2, R.drawable.category_icon, "Categories", "View list, create, edit or delete product categories"));
+        staticGeneralModelList.add(new StaticGeneralModel(3, R.drawable.people_groups_icon, "Customers", "View list, create, edit or delete customers"));
+        staticGeneralModelList.add(new StaticGeneralModel(4, R.drawable.supplier_24_icon, "Suppliers", "View list, create, edit or delete suppliers"));
         setRecycler();
         return view;
     }
@@ -67,7 +67,7 @@ public class ManagementsFragment extends Fragment {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerViewManagement.setLayoutManager(layoutManager);
         recyclerViewManagement.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));//line between items
-        ManagementsRecyclerAdapter managementsRecyclerAdapter = new ManagementsRecyclerAdapter(getContext(), managementList);
+         managementsRecyclerAdapter = new ManagementsRecyclerAdapter(getContext(), staticGeneralModelList);
         recyclerViewManagement.setAdapter(managementsRecyclerAdapter);
     }
 }

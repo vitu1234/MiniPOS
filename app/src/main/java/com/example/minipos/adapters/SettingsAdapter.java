@@ -12,18 +12,21 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.minipos.R;
-import com.example.minipos.activities.ProductsActivity;
-import com.example.minipos.activities.ProductsCategoryActivity;
-import com.example.minipos.activities.ProductsSupplierActivity;
+import com.example.minipos.activities.AboutActivity;
+import com.example.minipos.activities.AppSettingsActivity;
+import com.example.minipos.activities.DatabaseSettingsActivity;
+import com.example.minipos.activities.PrinterSettingsActivity;
+import com.example.minipos.activities.ProfileActivity;
+import com.example.minipos.activities.StoreSettingsActivity;
 import com.example.minipos.models.StaticGeneralModel;
 
 import java.util.List;
 
-public class ManagementsRecyclerAdapter extends RecyclerView.Adapter<ManagementsRecyclerAdapter.MyViewHolder> {
+public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.MyViewHolder> {
     Context context;
     List<StaticGeneralModel> staticGeneralModelList;
 
-    public ManagementsRecyclerAdapter(Context context, List<StaticGeneralModel> staticGeneralModelList) {
+    public SettingsAdapter(Context context, List<StaticGeneralModel> staticGeneralModelList) {
         this.context = context;
         this.staticGeneralModelList = staticGeneralModelList;
     }
@@ -71,23 +74,27 @@ public class ManagementsRecyclerAdapter extends RecyclerView.Adapter<Managements
             //go through each item if you have few items within recycler view
             if (getLayoutPosition() == 0) {
                 //Do whatever you want here
-                Intent intent = new Intent(v.getContext(), ProductsActivity.class);
+                Intent intent = new Intent(v.getContext(), ProfileActivity.class);
                 v.getContext().startActivity(intent);
             } else if (getLayoutPosition() == 1) {
                 //Do whatever you want here
-                Intent intent = new Intent(v.getContext(), ProductsCategoryActivity.class);
+                Intent intent = new Intent(v.getContext(), StoreSettingsActivity.class);
                 v.getContext().startActivity(intent);
             } else if (getLayoutPosition() == 2) {
-
+                //Do whatever you want here
+                Intent intent = new Intent(v.getContext(), AppSettingsActivity.class);
+                v.getContext().startActivity(intent);
 
             } else if (getLayoutPosition() == 3) {
-                Intent intent = new Intent(v.getContext(), ProductsSupplierActivity.class);
+                Intent intent = new Intent(v.getContext(), PrinterSettingsActivity.class);
                 v.getContext().startActivity(intent);
 
             } else if (getLayoutPosition() == 4) {
-
+                Intent intent = new Intent(v.getContext(), DatabaseSettingsActivity.class);
+                v.getContext().startActivity(intent);
             } else if (getLayoutPosition() == 5) {
-
+                Intent intent = new Intent(v.getContext(), AboutActivity.class);
+                v.getContext().startActivity(intent);
             }
         }
 

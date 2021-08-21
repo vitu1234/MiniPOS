@@ -33,4 +33,11 @@
     <string name="inventory">Inventory</string>
     <string name="save_changes">Save Changes</string>
     <string name="reset_changes">Reset</string>
+    <string name="contact">Contact</string>
+    <string name="apply_tax_by_default">Apply Tax by default?</string>
+    <string name="use_default_curreny_and_format">Use default currency symbol and format?</string>
+    <string name="connect_printer">Connect Printer</string>
+    <string name="connection">Connection: </string>
+    <string name="paper_size">Paper Size: </string>
+    <string name="miscellaneous">Miscellaneous</string>
 </resources>

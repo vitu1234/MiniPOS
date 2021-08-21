@@ -18,6 +18,7 @@ import com.example.minipos.R;
 import com.example.minipos.fragments.InventoryFragment;
 import com.example.minipos.fragments.ManagementsFragment;
 import com.example.minipos.fragments.PosTerminalFragment;
+import com.example.minipos.fragments.SettingsFragment;
 import com.google.android.material.navigation.NavigationView;
 
 public class DashboardActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -126,7 +127,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                 break;
             case R.id.managements:
                 displayFragment(new ManagementsFragment());
-                textVietitle.setText("Management");
+                textVietitle.setText("StaticGeneralModel");
                 break;
             case R.id.reports:
                 textVietitle.setText("Reports");
@@ -134,6 +135,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
             case R.id.settings:
                 textVietitle.setText("Settings");
+                displayFragment(new SettingsFragment());
                 break;
             case R.id.help:
                 textVietitle.setText("Help");

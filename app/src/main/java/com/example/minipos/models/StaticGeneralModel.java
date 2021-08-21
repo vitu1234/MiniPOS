@@ -1,10 +1,10 @@
 package com.example.minipos.models;
 
-public class Management {
+public class StaticGeneralModel {
     Integer id, img_url;
     String management_name, description;
 
-    public Management(Integer id, Integer img_url, String management_name, String description) {
+    public StaticGeneralModel(Integer id, Integer img_url, String management_name, String description) {
         this.id = id;
         this.img_url = img_url;
         this.management_name = management_name;
