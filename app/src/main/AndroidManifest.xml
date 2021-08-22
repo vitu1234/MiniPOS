@@ -23,7 +23,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MiniPOS"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activities.AboutActivity"></activity>
+        <activity android:name=".activities.SalesSummaryActivity"></activity>
+        <activity android:name=".activities.DailySaleReportActivity" />
+        <activity android:name=".activities.ReportsActivity" />
+        <activity android:name=".activities.AboutActivity" />
         <activity android:name=".activities.DatabaseSettingsActivity" />
         <activity android:name=".activities.PrinterSettingsActivity" />
         <activity android:name=".activities.AppSettingsActivity" />

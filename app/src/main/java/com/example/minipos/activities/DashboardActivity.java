@@ -1,5 +1,6 @@
 package com.example.minipos.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -130,7 +131,8 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                 textVietitle.setText("StaticGeneralModel");
                 break;
             case R.id.reports:
-                textVietitle.setText("Reports");
+                startActivity(new Intent(this, ReportsActivity.class));
+//                textVietitle.setText("Reports");
                 break;
 
             case R.id.settings:
